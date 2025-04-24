@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="FR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SolidEat - Admin{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header>
+        <a href="/"><img src="{% static 'css/logo.png' %}" alt="Logo SolidEat" media="(max-width: 600px)"></a>
+        <button onclick="document.location='/'">Se déconnecter</button>
+    </header>
+    <div class="bod">
+        <div class="menu">
+            <a href="/utilisateur">Utilisateur</a>
+            <a href="/restaurant">Restaurant</a>
+            <a href="/message">Message</a>
+        </div>
+        <div class="main">
+            {% block body %}
+                <strong>Bonjour {{ prenom|upper }}, il est {{ date }} </strong>
+            {% endblock %}
+        </div>
+    </div>
+    
+    
+    <footer>
+        <div>
+            <div class="lien-footer">
+                <a href="/utilisateur">Utilisateur</a>
+                <a href="/restaurant">Restaurant</a>
+                <a href="/message">Message</a>
+            </div>
+            <a href="/"><img src="{% static 'css/logo.png' %}" alt="Logo SolidEat" ></a>
+        </div>
+        <p>© SolidEat 2025</p>
+    </footer>
+</body>
+</html>
