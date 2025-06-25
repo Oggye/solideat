@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion & Inscription</title>
+    {% load static %}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5px 0;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .logo {
+            width: 180px;
+        }
+
+        .logo img {
+            width: 100%;
+        }
+
+        .container {
+            display: flex;
+            gap: 60px;
+            padding: 0 40px;
+        }
+
+        .form {
+            width: 400px;
+            padding: 30px 40px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form.connexion {
+            background-color: #fcf2b3;
+            max-height: 500px;
+        }
+
+        .form.inscription {
+            background-color: #f9c89b;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="checkbox"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color:rgba(225, 123, 21, 0.38);
+            border: none;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        button {
+            display: block;
+            width: 200px ;
+            background-color: white;
+            border: 2px solid #DB7A14;
+            color:rgb(0, 0, 0);
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            margin: 20px auto 0;
+        }
+
+        button:hover {
+            background-color: #DB7A14;
+            color: white;
+        }
+
+        .link {
+            margin-top: 10px;
+            text-align: right;
+            font-size: 13px;
+        }
+
+        .link a {
+            color: #8c4d0d;
+            text-decoration: none;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+            .helptext {
+        display: none;
+    }
+
+    #password-checklist {
+        margin-top: 10px;
+        padding-left: 0;
+        list-style: none;
+    }
+
+    #password-checklist li {
+        margin: 4px 0;
+        font-size: 14px;
+    }
+
+    .valid {
+        color: green;
+    }
+
+    .invalid {
+        color: red;
+    }
+</style>
+    
+    
+</head>
+<body>
+    <div class="logo-container">
+        <div class="logo">
+            <img src="{% static 'auth_app/Logo.png' %}" alt="Logo">
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Formulaire de connexion -->
+        <div class="form connexion">
+            <form method="post" action="{% url 'auth' %}">
+                {% csrf_token %}
+                <h1>Je suis déjà inscrit</h1>
+                {% if form_connexion.errors %}
+                <div class="error">
+                    Identifiants incorrects
+                </div>
+                {% endif %}
+                {{ form_connexion.as_p }}
+                <div class="link"><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></div>
+                <button type="submit" name="login">Se connecter</button>
+            </form>
+        </div>
+
+        <!-- Formulaire d'inscription -->
+        <div class="form inscription">
+            <form method="post" action="{% url 'auth' %}">
+                {% csrf_token %}
+                <h1>Je ne suis pas encore inscrit</h1>
+                {% if form_inscription.errors %}
+                <div class="error">
+                    {% for field, errors in form_inscription.errors.items %}
+                        {% for error in errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {{ form_inscription.as_p }}
+                <label>
+                    <input type="checkbox" name="subscribe" required>
+                    J'accepte les conditions d'utilisation
+                </label>
+                <button type="submit" name="register">S'inscrire</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const passwordField = document.querySelector('input[name="password1"]');
+    if (!passwordField) return;
+
+    const checklist = document.createElement("ul");
+    checklist.id = "password-checklist";
+    passwordField.insertAdjacentElement("afterend", checklist);
+
+    const rules = [
+        {
+            id: "rule-length",
+            text: "Le mot de passe doit contenir au minimum 8 caractères.",
+            validate: (pwd) => pwd.length >= 8
+        },
+        {
+            id: "rule-mix",
+            text: "Le mot de passe doit contenir des lettres et des chiffres.",
+            validate: (pwd) => {
+                const hasLetter = /[a-zA-Z]/.test(pwd);
+                const hasNumber = /\d/.test(pwd);
+                return pwd.trim() !== "" && hasLetter && hasNumber;
+            }
+        }
+    ];
+
+    rules.forEach(rule => {
+        const li = document.createElement("li");
+        li.id = rule.id;
+        li.textContent = `❌ ${rule.text}`;
+        li.classList.add("invalid");
+        checklist.appendChild(li);
+    });
+
+    function updateChecklist() {
+        const pwd = passwordField.value;
+        rules.forEach(rule => {
+            const li = document.getElementById(rule.id);
+            const valid = rule.validate(pwd);
+            li.textContent = `${valid ? "✅" : "❌"} ${rule.text}`;
+            li.className = valid ? "valid" : "invalid";
+        });
+    }
+
+    passwordField.addEventListener("input", updateChecklist);
+});
+</script>
+
+
+</body>
+
+
+
+</html>
+
