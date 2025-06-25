@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}Admin - Utilisateur{% endblock %}
+
+{% block body %}
+    <h1>Liste des utilisateurs</h1>
+    <table border="0">
+        {% for u in user %}
+        <tr>
+            <td>{{ u.nom }}</td>
+            <td>{{ u.prenom }}</td>
+            <td>{{ u.email }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">Aucun utilisateur trouvé.</td></tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
+
